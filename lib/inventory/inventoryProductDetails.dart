@@ -115,9 +115,6 @@ class _inventoryProductDetailsState extends State<inventoryProductDetails> {
     try {
 
       String userEmail = FirebaseAuth.instance.currentUser?.email ?? '';
-      print("collection ${widget.collection}");
-      print("product ${pnameController.text}");
-      print("email ${userEmail}");
       int total = int.parse(totalproducts);
       total = total -1;
       totalproducts = total.toString();
@@ -134,8 +131,15 @@ class _inventoryProductDetailsState extends State<inventoryProductDetails> {
           .collection(widget.collection)
           .doc(pnameController.text);
 
+      DocumentReference totalproductsDocRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(userEmail)
+          .collection('allproducts')
+          .doc(pnameController.text);
+
       // Delete the document
       await orderDocRef.delete();
+      await totalproductsDocRef.delete();
 
       print('Document deleted successfully');
       Navigator.pushReplacementNamed(context,inventory.userinventory);

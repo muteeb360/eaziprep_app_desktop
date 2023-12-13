@@ -210,22 +210,25 @@ class _servicesState extends State<services> {
 
       // Get the user's email from the login screen or wherever you store it
       String userEmail = await getUserEmail(); // Replace with actual user email retrieval logic
-      DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc('clients');
+      DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc('FBM Services');
       DocumentSnapshot userSnapshot = await userRef.get();
+      DocumentReference userRef1 = FirebaseFirestore.instance.collection('users').doc('FBA Services');
+      DocumentSnapshot userSnapshot1 = await userRef1.get();
+      DocumentReference userRef2 = FirebaseFirestore.instance.collection('users').doc('Etsy Fulfilment');
+      DocumentSnapshot userSnapshot2 = await userRef2.get();
+      DocumentReference userRef3 = FirebaseFirestore.instance.collection('users').doc('Ebay Fulfilment');
+      DocumentSnapshot userSnapshot3 = await userRef3.get();
+      DocumentReference userRef4 = FirebaseFirestore.instance.collection('users').doc('Tik Tok Fulfilment');
+      DocumentSnapshot userSnapshot4 = await userRef4.get();
 
-      // Check if the document exists
-      if (userSnapshot.exists) {
-        // Get the company name and selected services
-        setState(() {
-          fbm = userSnapshot['FPM Services'];
-          fba = userSnapshot['FBA Services'];
-          etsy = userSnapshot['Etsy Fulfilment'];
-          ebay = userSnapshot['Ebay Fulfilment'];
-          tiktok = userSnapshot['Tik Tok Fulfilment'];
-        });
-      } else {
-        print("User document does not exist");
-      }
+      // Get the company name and selected services
+      setState(() {
+        fbm = userSnapshot['clients'];
+        fba = userSnapshot1['clients'];
+        etsy = userSnapshot2['clients'];
+        ebay = userSnapshot3['clients'];
+        tiktok = userSnapshot4['clients'];
+      });
       int fbm1=int.parse(fbm),fba1=int.parse(fba),etsy1=int.parse(etsy),ebay1=int.parse(ebay),tiktok1=int.parse(tiktok);
       // Extract selected services
       List<String> selectedServices = [];
@@ -239,36 +242,41 @@ class _servicesState extends State<services> {
         if(selectedServices[i]=='FPM Services'){
           fbm1 +=1;
           fbm = fbm1.toString();
-          await FirebaseFirestore.instance.collection('users').doc('clients').update({
-            '$selectedServices[i]': fbm,
+          await FirebaseFirestore.instance.collection('users').doc('FBM Services').update({
+            'clients': fbm,
+            'emails': userEmail
             // Add more fields as needed
           });
         }else if(selectedServices[i]=='FBA Services'){
           fba1 +=1;
           fba = fba1.toString();
-          await FirebaseFirestore.instance.collection('users').doc('clients').update({
-            '$selectedServices[i]': fba,
+          await FirebaseFirestore.instance.collection('users').doc('FBA Services').update({
+            'clients': fba,
+            'emails': userEmail
             // Add more fields as needed
           });
         }else if(selectedServices[i]=='Etsy Fulfilment'){
           etsy1 +=1;
           etsy = etsy1.toString();
-          await FirebaseFirestore.instance.collection('users').doc('clients').update({
-            '$selectedServices[i]': etsy,
+          await FirebaseFirestore.instance.collection('users').doc('Etsy Fulfilment').update({
+            'clients': etsy,
+            'emails': userEmail
             // Add more fields as needed
           });
         }else if(selectedServices[i]=='Ebay Fulfilment'){
           ebay1 +=1;
           ebay = ebay1.toString();
-          await FirebaseFirestore.instance.collection('users').doc('clients').update({
-            '$selectedServices[i]': ebay,
+          await FirebaseFirestore.instance.collection('users').doc('Ebay Fulfilment').update({
+            'clients': ebay,
+            'emails': userEmail
             // Add more fields as needed
           });
         }else if(selectedServices[i]=='Tik Tok Fulfilment'){
           tiktok1 +=1;
           tiktok = tiktok1.toString();
-          await FirebaseFirestore.instance.collection('users').doc('clients').update({
-            '$selectedServices[i]': tiktok,
+          await FirebaseFirestore.instance.collection('users').doc('Tik Tok Fulfilment').update({
+            'clients': tiktok,
+            'emails': userEmail
             // Add more fields as needed
           });
         }

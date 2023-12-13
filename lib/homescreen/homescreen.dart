@@ -234,7 +234,7 @@ class _homescreenState extends State<homescreen> {
                                                                   screenWidth *
                                                                       0.45,
                                                               child: Text(
-                                                                '$cname',
+                                                                'Customer Name : $cname',
                                                                 style:
                                                                     GoogleFonts
                                                                         .getFont(

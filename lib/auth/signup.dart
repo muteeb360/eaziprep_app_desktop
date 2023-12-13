@@ -68,6 +68,8 @@ class _signupState extends State<signup> {
 
       // Add user details to Firestore
       await FirebaseFirestore.instance.collection('users').doc(email.text.trim()).set({
+        'email': email.text.trim(),
+        'Total Products': 0,
         'name': name.text,
         'company_name': companyname.text,
         'phone': phone.text,

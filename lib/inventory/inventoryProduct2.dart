@@ -160,6 +160,13 @@ class _inventoryProduct2State extends State<inventoryProduct2> {
       'imageUrls': imageUrls,
     });
 
+    await FirebaseFirestore.instance.collection('users').doc(email).collection('allproducts').doc(pname).set({
+      'pname': pname,
+      'variations': variations,
+      'stock': stock,
+      'imageUrls': imageUrls,
+    });
+
     await FirebaseFirestore.instance.collection('users').doc(email).update({
       'Total Products': totalproducts,
     });

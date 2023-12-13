@@ -227,7 +227,6 @@ print('Stock : $stock');
         'quantities':quantities
       });
 
-
       // Save details to Firestore
       await FirebaseFirestore.instance
           .collection('users')
