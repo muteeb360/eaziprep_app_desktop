@@ -69,8 +69,7 @@ class _addorderState extends State<addorder> {
             // Get the company name and selected services
             setState(() {
               companyName = userSnapshot['company_name'];
-              selectedServices =
-              List<String>.from(userSnapshot['selectedServices']);
+              selectedServices = List<String>.from(userSnapshot['selectedServices']);
             });
           } else {
             print("User document does not exist");
@@ -108,23 +107,12 @@ class _addorderState extends State<addorder> {
       QuerySnapshot querySnapshot = await subcollectionReference.get();
 
       // Extract document names from the query snapshot
-      productNames = querySnapshot.docs.map((doc) => doc.id).toList();
+      setState(() {
+        productNames = querySnapshot.docs.map((doc) => doc.id).toList();
+      });
     } catch (e) {
       print('Error fetching subcollection documents: $e');
     }
-  }
-
-
-  void showToast(String message) {
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.TOP,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.red,
-      textColor: Colors.white,
-      fontSize: 16.0,
-    );
   }
 
   Future<void> getData() async {
@@ -133,7 +121,6 @@ class _addorderState extends State<addorder> {
     if (user != null) {
       userEmail = user.email!;
     }
-    // Replace 'your_collection_name' and other placeholders with actual values
     bool fieldExists = await doesFieldExist(
         userEmail, selectedproduct, 'variations',selectedservice);
 

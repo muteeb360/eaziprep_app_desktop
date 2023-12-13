@@ -118,7 +118,7 @@ class _servicesState extends State<services> {
             children: [
               Padding(
                 padding: EdgeInsets.only(top: screenWidth * 0.092, left: screenWidth * 0.01),
-                child: buildCard('Amazon Fulfilment', screenWidth, 3),
+                child: buildCard('FBA Services', screenWidth, 3),
               ),
               Padding(
                 padding: EdgeInsets.only(top: screenWidth * 0.01, left: screenWidth * 0.01),
@@ -206,9 +206,27 @@ class _servicesState extends State<services> {
       _loading = true;
     });
     try {
+      String fbm='',fba='',etsy='',ebay='',tiktok='';
+
       // Get the user's email from the login screen or wherever you store it
       String userEmail = await getUserEmail(); // Replace with actual user email retrieval logic
+      DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc('clients');
+      DocumentSnapshot userSnapshot = await userRef.get();
 
+      // Check if the document exists
+      if (userSnapshot.exists) {
+        // Get the company name and selected services
+        setState(() {
+          fbm = userSnapshot['FPM Services'];
+          fba = userSnapshot['FBA Services'];
+          etsy = userSnapshot['Etsy Fulfilment'];
+          ebay = userSnapshot['Ebay Fulfilment'];
+          tiktok = userSnapshot['Tik Tok Fulfilment'];
+        });
+      } else {
+        print("User document does not exist");
+      }
+      int fbm1=int.parse(fbm),fba1=int.parse(fba),etsy1=int.parse(etsy),ebay1=int.parse(ebay),tiktok1=int.parse(tiktok);
       // Extract selected services
       List<String> selectedServices = [];
       for (int i = 0; i < selectedCardIndices.length; i++) {
@@ -217,8 +235,44 @@ class _servicesState extends State<services> {
         }
       }
 
-      // createEmptySubcollections(userEmail,selectedServices);
-
+      for (int i = 0; i < selectedServices.length; i++) {
+        if(selectedServices[i]=='FPM Services'){
+          fbm1 +=1;
+          fbm = fbm1.toString();
+          await FirebaseFirestore.instance.collection('users').doc('clients').update({
+            '$selectedServices[i]': fbm,
+            // Add more fields as needed
+          });
+        }else if(selectedServices[i]=='FBA Services'){
+          fba1 +=1;
+          fba = fba1.toString();
+          await FirebaseFirestore.instance.collection('users').doc('clients').update({
+            '$selectedServices[i]': fba,
+            // Add more fields as needed
+          });
+        }else if(selectedServices[i]=='Etsy Fulfilment'){
+          etsy1 +=1;
+          etsy = etsy1.toString();
+          await FirebaseFirestore.instance.collection('users').doc('clients').update({
+            '$selectedServices[i]': etsy,
+            // Add more fields as needed
+          });
+        }else if(selectedServices[i]=='Ebay Fulfilment'){
+          ebay1 +=1;
+          ebay = ebay1.toString();
+          await FirebaseFirestore.instance.collection('users').doc('clients').update({
+            '$selectedServices[i]': ebay,
+            // Add more fields as needed
+          });
+        }else if(selectedServices[i]=='Tik Tok Fulfilment'){
+          tiktok1 +=1;
+          tiktok = tiktok1.toString();
+          await FirebaseFirestore.instance.collection('users').doc('clients').update({
+            '$selectedServices[i]': tiktok,
+            // Add more fields as needed
+          });
+        }
+      }
       // Add selected services to Firestore
       await FirebaseFirestore.instance.collection('users').doc(userEmail).update({
         'selectedServices': selectedServices,
