@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eaziprep_app_desktop/homescreen/homescreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -169,10 +171,30 @@ class _loginState extends State<login> {
         password: password,
       );
       AuthService.setLoginStatus();
-      setState(() {
-        _loading = false;
-      });
-      Navigator.pushReplacementNamed(context, services.service);
+      DocumentSnapshot userSnapshot =
+      await FirebaseFirestore.instance.collection('users').doc(email).get();
+
+      if (userSnapshot.exists) {
+        Map<String, dynamic>? userData = userSnapshot.data() as Map<String, dynamic>?;
+
+        // Check if the selectedServices field is present
+        if (userData != null && userData.containsKey('selectedServices')) {
+          setState(() {
+            _loading = false;
+          });
+          Navigator.pushReplacementNamed(context, homescreen.home);
+        } else {
+          setState(() {
+            _loading = false;
+          });
+          Navigator.pushReplacementNamed(context, services.service);
+        }
+      } else {
+        print('User document does not exist');
+      }
+
+
+
     } on FirebaseAuthException catch (e) {
       print("Error logging in: $e");
       showToast("Error logging in. Please try again.");

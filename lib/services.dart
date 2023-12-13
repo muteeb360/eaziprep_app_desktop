@@ -299,28 +299,6 @@ class _servicesState extends State<services> {
     return FirebaseAuth.instance.currentUser?.email ?? '';
   }
 
-  // Future<void> createEmptySubcollections(String userEmail, List<String> selectedServices) async {
-  //   // Reference to the Firestore instance
-  //   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  //
-  //   // Reference to the 'users' collection
-  //   CollectionReference usersCollection = firestore.collection('users');
-  //
-  //   try {
-  //     // Reference to the user's document using their email
-  //     DocumentReference userDocument = usersCollection.doc(userEmail);
-  //
-  //     // Iterate through the selected services and create empty subcollections
-  //     for (String service in selectedServices) {
-  //       // Create an empty subcollection within the user's document for each service
-  //       await userDocument.collection(service).doc().set(Map<String, dynamic>());
-  //       print('Empty subcollection for $service created successfully.');
-  //     }
-  //   } catch (e) {
-  //     print('Error creating empty subcollections: $e');
-  //   }
-  // }
-
 }
 
 class HexColor extends Color {
