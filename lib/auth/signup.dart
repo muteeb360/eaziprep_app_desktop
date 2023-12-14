@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -45,62 +46,7 @@ class _signupState extends State<signup> {
     );
   }
 
-  Future<void> signUp() async {
-    if (name.text.isEmpty ||
-        companyname.text.isEmpty ||
-        email.text.isEmpty ||
-        password.text.isEmpty ||
-        phone.text.isEmpty ||
-        address.text.isEmpty) {
-      showToast("Please fill all fields.");
-      return;
-    }
-    setState(() {
-      _loading = true;
-    });
 
-    try {
-      _uploadImageToStorage().then((_) {});
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email.text.trim(),
-        password: password.text,
-      );
-
-      // Add user details to Firestore
-      await FirebaseFirestore.instance.collection('users').doc(email.text.trim()).set({
-        'email': email.text.trim(),
-        'Total Products': 0,
-        'name': name.text,
-        'company_name': companyname.text,
-        'phone': phone.text,
-        'address': address.text,
-        'imageUrl':_imageUrl
-        // Add more fields as needed
-      });
-      setState(() {
-        _loading = false;
-      });
-
-      // Navigate to the login screen after successful registration
-      Navigator.pushReplacementNamed(context, login.signin);
-    } on FirebaseAuthException catch (e) {
-      print("Error signing up: $e");
-      showToast("Error signing up. Please try again.");
-    }
-
-  }
-
-  void showToast(String message) {
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.TOP,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.red,
-      textColor: Colors.white,
-      fontSize: 16.0,
-    );
-  }
 
   Future<void> _pickImage(ImageSource source) async {
     final pickedImage = await picker.getImage(source: source);
@@ -168,6 +114,67 @@ class _signupState extends State<signup> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     Color customColor = HexColor("#fd7b2e");
+
+    Future<void> signUp() async {
+      if (name.text.isEmpty ||
+          companyname.text.isEmpty ||
+          email.text.isEmpty ||
+          password.text.isEmpty ||
+          phone.text.isEmpty ||
+          address.text.isEmpty) {
+        AwesomeDialog(context: context,
+          width: screenWidth*0.3,
+          dialogType: DialogType.error,
+          animType: AnimType.topSlide,
+          showCloseIcon: true,
+          enableEnterKey: true,
+          title: 'Error',
+          desc: 'Please fill all fields',
+        ).show();
+        return;
+      }
+      setState(() {
+        _loading = true;
+      });
+
+      try {
+        _uploadImageToStorage().then((_) {});
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: email.text.trim(),
+          password: password.text,
+        );
+
+        // Add user details to Firestore
+        await FirebaseFirestore.instance.collection('users').doc(email.text.trim()).set({
+          'email': email.text.trim(),
+          'Total Products': '0',
+          'name': name.text,
+          'company_name': companyname.text,
+          'phone': phone.text,
+          'address': address.text,
+          'imageUrl':_imageUrl
+          // Add more fields as needed
+        });
+        setState(() {
+          _loading = false;
+        });
+
+        // Navigate to the login screen after successful registration
+        Navigator.pushReplacementNamed(context, login.signin);
+      } on FirebaseAuthException catch (e) {
+        print("Error signing up: $e");
+        AwesomeDialog(context: context,
+          width: screenWidth*0.3,
+          dialogType: DialogType.error,
+          animType: AnimType.topSlide,
+          showCloseIcon: true,
+          enableEnterKey: true,
+          title: 'Error',
+          desc: 'Error Signing Up. Cause $e',
+        ).show();
+      }
+
+    }
     return WillPopScope(
       onWillPop: () async {
         Navigator.pushReplacementNamed(
@@ -176,7 +183,11 @@ class _signupState extends State<signup> {
       },
         child: Scaffold(
           resizeToAvoidBottomInset: false,
-          body: Container(
+          body: _loading
+              ? Center(
+            child: CircularProgressIndicator(),
+          )
+              : Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image:
@@ -383,15 +394,6 @@ class _signupState extends State<signup> {
                             'Sign Up',
                             style: TextStyle(color: Colors.white),
                           ),
-                        ),
-                      ),
-                    ),
-                    Visibility(
-                      visible: _loading,
-                      child: Container(
-                        color: Colors.black.withOpacity(0.5), // Adjust opacity as needed
-                        child: Center(
-                          child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(customColor),),
                         ),
                       ),
                     ),

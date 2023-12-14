@@ -19,7 +19,7 @@ import 'inventory/inventoryProduct2.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.web
+      options: DefaultFirebaseOptions.web
   );
   runApp(const Eaziprep());
 }

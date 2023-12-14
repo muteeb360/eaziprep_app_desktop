@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -88,7 +89,11 @@ class _homescreenservicesState extends State<homescreenservices> {
         return true;
       },
       child: Scaffold(
-        body: Stack(
+        body: _loading
+            ? Center(
+          child: CircularProgressIndicator(),
+        )
+            : Stack(
           fit: StackFit.expand,
           children: [
             Container(
@@ -135,7 +140,15 @@ class _homescreenservicesState extends State<homescreenservices> {
                       onPressed: () async {
                         // Check if at least one service is selected
                         if (!selectedCardIndices.contains(true)) {
-                          showToast("Please select at least one service.");
+                          AwesomeDialog(context: context,
+                            width: screenWidth*0.3,
+                            dialogType: DialogType.error,
+                            animType: AnimType.topSlide,
+                            showCloseIcon: true,
+                            enableEnterKey: true,
+                            title: 'Error',
+                            desc: 'Please select at least 1 service.',
+                          ).show();
                           return;
                         }
 
@@ -185,32 +198,12 @@ class _homescreenservicesState extends State<homescreenservices> {
 
               ],
             ),
-            Visibility(
-              visible: _loading,
-              child: Container(
-                color: Colors.black.withOpacity(0.5), // Adjust opacity as needed
-                child: Center(
-                  child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(customColor),),
-                ),
-              ),
-            ),
           ],
         ),
       ),
     );
   }
 
-  void showToast(String message) {
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.TOP,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.red,
-      textColor: Colors.white,
-      fontSize: 16.0,
-    );
-  }
 
   Widget buildCard(String title,double screenWidth, int index) {
     Color customColor = HexColor("#fd7b2e");
@@ -279,6 +272,7 @@ class _homescreenservicesState extends State<homescreenservices> {
         tiktok = userSnapshot4['clients'];
       });
       int fbm1=int.parse(fbm),fba1=int.parse(fba),etsy1=int.parse(etsy),ebay1=int.parse(ebay),tiktok1=int.parse(tiktok);
+      int fbm2=int.parse(fbm),fba2=int.parse(fba),etsy2=int.parse(etsy),ebay2=int.parse(ebay),tiktok2=int.parse(tiktok);
       // Extract selected services
       List<String> nowselectedServices = [];
       for (int i = 0; i < selectedCardIndices.length; i++) {
@@ -287,68 +281,197 @@ class _homescreenservicesState extends State<homescreenservices> {
         }
       }
 
-      for (int i = 0; i < nowselectedServices.length; i++) {
-        if(nowselectedServices[i]=='FBM Services'){
-          fbm1 +=1;
-          fbm = fbm1.toString();
-          await FirebaseFirestore.instance.collection('users').doc('FBM Services').update({
-            'clients': fbm,
-            'emails': userEmail
-            // Add more fields as needed
-          });
-        }else if(nowselectedServices[i]=='FBA Services'){
-          fba1 +=1;
-          fba = fba1.toString();
-          await FirebaseFirestore.instance.collection('users').doc('FBA Services').update({
-            'clients': fba,
-            'emails': userEmail
-            // Add more fields as needed
-          });
-        }else if(nowselectedServices[i]=='Etsy Fulfilment'){
-          etsy1 +=1;
-          etsy = etsy1.toString();
-          await FirebaseFirestore.instance.collection('users').doc('Etsy Fulfilment').update({
-            'clients': etsy,
-            'emails': userEmail
-            // Add more fields as needed
-          });
-        }else if(nowselectedServices[i]=='Ebay Fulfilment'){
-          ebay1 +=1;
-          ebay = ebay1.toString();
-          await FirebaseFirestore.instance.collection('users').doc('Ebay Fulfilment').update({
-            'clients': ebay,
-            'emails': userEmail
-            // Add more fields as needed
-          });
-        }else if(nowselectedServices[i]=='Tik Tok Fulfilment'){
-          tiktok1 +=1;
-          tiktok = tiktok1.toString();
-          await FirebaseFirestore.instance.collection('users').doc('Tik Tok Fulfilment').update({
-            'clients': tiktok,
-            'emails': userEmail
-            // Add more fields as needed
-          });
+      print('previous $previousselectedservices');
+      print('now $nowselectedServices');
+
+      Set<String> nowSet = Set.from(nowselectedServices);
+      Set<String> previousSet = Set.from(previousselectedservices);
+      print('nowset $nowSet');
+      print('previous set $previousSet');
+      bool containsAllElements = nowSet.containsAll(previousSet);
+      print('containselements value $containsAllElements');
+      List<String> notPresentElements = previousselectedservices.where((element) => !nowselectedServices.contains(element)).toList();
+      print('notpresentelements list before checking $notPresentElements');
+
+      if (containsAllElements) {
+        print('All elements of previousselectedservices are present in nowselectedServices');
+        // Add selected services to Firestore
+        await FirebaseFirestore.instance.collection('users').doc(userEmail).update({
+          'selectedServices': nowselectedServices,
+        });
+        nowselectedServices.removeWhere((element) => previousselectedservices.contains(element));
+        print('Remaining elements in nowselectedServices: $nowselectedServices');
+        for (int i = 0; i < nowselectedServices.length; i++) {
+          if(nowselectedServices[i]=='FBM Services'){
+            fbm1 +=1;
+            fbm = fbm1.toString();
+            await FirebaseFirestore.instance.collection('users').doc('FBM Services').update({
+              'clients': fbm,
+              'emails': FieldValue.arrayUnion([userEmail]),
+            });
+          }else if(nowselectedServices[i]=='FBA Services'){
+            fba1 +=1;
+            fba = fba1.toString();
+            await FirebaseFirestore.instance.collection('users').doc('FBA Services').update({
+              'clients': fba,
+              'emails': FieldValue.arrayUnion([userEmail]),
+            });
+          }else if(nowselectedServices[i]=='Etsy Fulfilment'){
+            etsy1 +=1;
+            etsy = etsy1.toString();
+            await FirebaseFirestore.instance.collection('users').doc('Etsy Fulfilment').update({
+              'clients': etsy,
+              'emails': FieldValue.arrayUnion([userEmail]),
+            });
+          }else if(nowselectedServices[i]=='Ebay Fulfilment'){
+            ebay1 +=1;
+            ebay = ebay1.toString();
+            await FirebaseFirestore.instance.collection('users').doc('Ebay Fulfilment').update({
+              'clients': ebay,
+              'emails': FieldValue.arrayUnion([userEmail]),
+            });
+          }else if(nowselectedServices[i]=='Tik Tok Fulfilment'){
+            tiktok1 +=1;
+            tiktok = tiktok1.toString();
+            await FirebaseFirestore.instance.collection('users').doc('Tik Tok Fulfilment').update({
+              'clients': tiktok,
+              'emails': FieldValue.arrayUnion([userEmail]),
+            });
+          }
+        }
+    } else {
+        await FirebaseFirestore.instance.collection('users').doc(userEmail).update({
+          'selectedServices': nowselectedServices,
+        });
+        print('Not all elements of previousselectedservices are present in nowselectedServices');
+        print('Elements not present in nowselectedServices after checking: $notPresentElements');
+        bool isemailpresent = false;
+        for (int i = 0; i < nowselectedServices.length; i++) {
+          isemailpresent = await isCurrentUserEmailInArray(nowselectedServices[i]);
+          print('value of isemailpresent is : $isemailpresent');
+          if(!isemailpresent){
+            if(nowselectedServices[i]=='FBM Services'){
+              fbm1 +=1;
+              fbm = fbm1.toString();
+              await FirebaseFirestore.instance.collection('users').doc('FBM Services').update({
+                'clients': fbm,
+                'emails': FieldValue.arrayUnion([userEmail]),
+              });
+            }else if(nowselectedServices[i]=='FBA Services'){
+              fba1 +=1;
+              fba = fba1.toString();
+              await FirebaseFirestore.instance.collection('users').doc('FBA Services').update({
+                'clients': fba,
+                'emails': FieldValue.arrayUnion([userEmail]),
+              });
+            }else if(nowselectedServices[i]=='Etsy Fulfilment'){
+              etsy1 +=1;
+              etsy = etsy1.toString();
+              await FirebaseFirestore.instance.collection('users').doc('Etsy Fulfilment').update({
+                'clients': etsy,
+                'emails': FieldValue.arrayUnion([userEmail]),
+              });
+            }else if(nowselectedServices[i]=='Ebay Fulfilment'){
+              ebay1 +=1;
+              ebay = ebay1.toString();
+              await FirebaseFirestore.instance.collection('users').doc('Ebay Fulfilment').update({
+                'clients': ebay,
+                'emails': FieldValue.arrayUnion([userEmail]),
+              });
+            }else if(nowselectedServices[i]=='Tik Tok Fulfilment'){
+              tiktok1 +=1;
+              tiktok = tiktok1.toString();
+              await FirebaseFirestore.instance.collection('users').doc('Tik Tok Fulfilment').update({
+                'clients': tiktok,
+                'emails': FieldValue.arrayUnion([userEmail]),
+              });
+            }
+          }
+        }
+
+        for (int i = 0; i < notPresentElements.length; i++) {
+          if(notPresentElements[i]=='FBM Services'){
+            fbm2 -=1;
+            fbm = fbm2.toString();
+            await FirebaseFirestore.instance.collection('users').doc('FBM Services').update({
+              'clients': fbm,
+              'emails': FieldValue.arrayRemove([userEmail]),
+            });
+          }else if(notPresentElements[i]=='FBA Services'){
+            fba2 -=1;
+            fba = fba2.toString();
+            await FirebaseFirestore.instance.collection('users').doc('FBA Services').update({
+              'clients': fba,
+              'emails': FieldValue.arrayRemove([userEmail]),
+            });
+          }else if(notPresentElements[i]=='Etsy Fulfilment'){
+            etsy2 -=1;
+            etsy = etsy2.toString();
+            await FirebaseFirestore.instance.collection('users').doc('Etsy Fulfilment').update({
+              'clients': etsy,
+              'emails': FieldValue.arrayRemove([userEmail]),
+            });
+          }else if(notPresentElements[i]=='Ebay Fulfilment'){
+            ebay2 -=1;
+            ebay = ebay2.toString();
+            await FirebaseFirestore.instance.collection('users').doc('Ebay Fulfilment').update({
+              'clients': ebay,
+              'emails': FieldValue.arrayRemove([userEmail]),
+            });
+          }else if(notPresentElements[i]=='Tik Tok Fulfilment'){
+            tiktok2 -=1;
+            tiktok = tiktok2.toString();
+            await FirebaseFirestore.instance.collection('users').doc('Tik Tok Fulfilment').update({
+              'clients': tiktok,
+              'emails': FieldValue.arrayRemove([userEmail]),
+            });
+          }
         }
       }
-      // Add selected services to Firestore
-      await FirebaseFirestore.instance.collection('users').doc(userEmail).update({
-        'selectedServices': nowselectedServices,
-        // Add more fields as needed
-      });
       setState(() {
         _loading = false;
       });
     } catch (e) {
       print("Error saving services: $e");
-      // Handle errors
     }
   }
+
+  Future<bool> isCurrentUserEmailInArray(String service) async {
+    try {
+      // Get the current user's email
+      String userEmail = await getUserEmail();
+
+      // Reference to the services document in the users collection
+      DocumentReference servicesRef = FirebaseFirestore.instance.collection('users').doc(service);
+
+      // Fetch data from Firestore
+      DocumentSnapshot servicesSnapshot = await servicesRef.get();
+
+      // Check if the document exists
+      if (servicesSnapshot.exists) {
+        // Get the array field 'emails'
+        List<dynamic> emails = servicesSnapshot['emails'];
+
+        // Check if the current user's email is in the array
+        return emails != null && emails.contains(userEmail);
+      } else {
+        print("Services document does not exist");
+        return false;
+      }
+    } catch (e) {
+      print("Error checking email in array: $e");
+      return false;
+    }
+  }
+
 
   Future<String> getUserEmail() async {
     return FirebaseAuth.instance.currentUser?.email ?? '';
   }
 
 }
+
+
 
 class HexColor extends Color {
   HexColor(final String hexColor) : super(_getColorFromHex(hexColor));

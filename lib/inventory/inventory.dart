@@ -57,25 +57,6 @@ class _inventoryState extends State<inventory> {
     });
   }
 
-  void _showLoadingDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // dialog is dismissible with a tap on the barrier
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(height: 16.0),
-              Text("Loading..."),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
   Stream<QuerySnapshot> getDataStream(String collectionname) {
     return FirebaseFirestore.instance
         .collection('users')

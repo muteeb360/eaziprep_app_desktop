@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eaziprep_app_desktop/homescreen/homescreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -28,7 +29,66 @@ class _loginState extends State<login> {
     double screenWidth = MediaQuery.of(context).size.width;
 
     Color customColor = HexColor("#fd7b2e");
+    Future<void> loginUser(String email, String password) async {
+      if (email.trim().isEmpty || password.isEmpty) {
+        AwesomeDialog(context: context,
+          width: screenWidth*0.3,
+          dialogType: DialogType.error,
+          animType: AnimType.topSlide,
+          showCloseIcon: true,
+          enableEnterKey: true,
+          title: 'Error',
+          desc: 'Please fill all fields',
+        ).show();
+        return;
+      }
+      setState(() {
+        _loading = true;
+      });
 
+      try {
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+        AuthService.setLoginStatus();
+        DocumentSnapshot userSnapshot =
+        await FirebaseFirestore.instance.collection('users').doc(email).get();
+
+        if (userSnapshot.exists) {
+          Map<String, dynamic>? userData = userSnapshot.data() as Map<String, dynamic>?;
+
+          // Check if the selectedServices field is present
+          if (userData != null && userData.containsKey('selectedServices')) {
+            setState(() {
+              _loading = false;
+            });
+            Navigator.pushReplacementNamed(context, homescreen.home);
+          } else {
+            setState(() {
+              _loading = false;
+            });
+            Navigator.pushReplacementNamed(context, services.service);
+          }
+        } else {
+          print('User document does not exist');
+        }
+
+
+
+      } on FirebaseAuthException catch (e) {
+        print("Error logging in: $e");
+        AwesomeDialog(context: context,
+          width: screenWidth*0.3,
+          dialogType: DialogType.error,
+          animType: AnimType.topSlide,
+          showCloseIcon: true,
+          enableEnterKey: true,
+          title: 'Error',
+          desc: 'Error Loggin In. Cause : $e',
+        ).show();
+      }
+    }
     return WillPopScope(
       onWillPop: () async {
         Navigator.pushReplacementNamed(
@@ -37,7 +97,11 @@ class _loginState extends State<login> {
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        body: Container(
+        body: _loading
+            ? Center(
+          child: CircularProgressIndicator(),
+        )
+            : Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
               image:
@@ -48,15 +112,6 @@ class _loginState extends State<login> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Visibility(
-                visible: _loading,
-                child: Container(
-                  color: Colors.black.withOpacity(0.5), // Adjust opacity as needed
-                  child: Center(
-                    child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(customColor),),
-                  ),
-                ),
-              ),
               Padding(
                 padding: EdgeInsets.only(bottom: screenWidth*0, right: screenWidth*0.95),
                 child: IconButton(
@@ -156,61 +211,7 @@ class _loginState extends State<login> {
         ),
       ),);
   }
-  Future<void> loginUser(String email, String password) async {
-    if (email.trim().isEmpty || password.isEmpty) {
-      showToast("Please fill all fields.");
-      return;
-    }
-    setState(() {
-      _loading = true;
-    });
 
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      AuthService.setLoginStatus();
-      DocumentSnapshot userSnapshot =
-      await FirebaseFirestore.instance.collection('users').doc(email).get();
-
-      if (userSnapshot.exists) {
-        Map<String, dynamic>? userData = userSnapshot.data() as Map<String, dynamic>?;
-
-        // Check if the selectedServices field is present
-        if (userData != null && userData.containsKey('selectedServices')) {
-          setState(() {
-            _loading = false;
-          });
-          Navigator.pushReplacementNamed(context, homescreen.home);
-        } else {
-          setState(() {
-            _loading = false;
-          });
-          Navigator.pushReplacementNamed(context, services.service);
-        }
-      } else {
-        print('User document does not exist');
-      }
-
-
-
-    } on FirebaseAuthException catch (e) {
-      print("Error logging in: $e");
-      showToast("Error logging in. Please try again.");
-    }
-  }
-  void showToast(String message) {
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.red,
-      textColor: Colors.white,
-      fontSize: 16.0,
-    );
-  }
 
 }
 

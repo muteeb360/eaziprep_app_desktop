@@ -53,7 +53,7 @@ class _homescreenuserdetailswidgetState extends State<homescreenuserdetailswidge
         : Padding(
       padding: EdgeInsets.only(top: screenHeight*0.03,left: screenWidth * 0.1,),
       child: Container(
-        width: screenWidth*0.3,
+        width: screenWidth*0.49,
         height: screenHeight*0.23,
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(
@@ -82,7 +82,7 @@ class _homescreenuserdetailswidgetState extends State<homescreenuserdetailswidge
                   Container(
                     width:
                     screenWidth *
-                        0.18,
+                        0.3,
                     child: Column(
                       children: [
                         Row(

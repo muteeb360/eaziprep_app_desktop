@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -266,7 +267,15 @@ class _inventoryProductDetailsState extends State<inventoryProductDetails> {
                       if (pnameController.text.isEmpty ||
                           variationController.text.isEmpty ||
                           stockController.text.isEmpty) {
-                        showToast("Please fill all fields.");
+                        AwesomeDialog(context: context,
+                        width: screenWidth*0.3,
+                        dialogType: DialogType.error,
+                        animType: AnimType.topSlide,
+                        showCloseIcon: true,
+                        enableEnterKey: true,
+                        title: 'Error',
+                        desc: 'Please fill all fields.',
+                      ).show();
                       } else {
                         updateUserData();
                       }
@@ -301,18 +310,6 @@ class _inventoryProductDetailsState extends State<inventoryProductDetails> {
           ),
         ),
       ),
-    );
-  }
-
-  void showToast(String message) {
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.TOP,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.red,
-      textColor: Colors.white,
-      fontSize: 16.0,
     );
   }
 }

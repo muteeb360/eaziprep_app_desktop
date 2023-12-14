@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -63,18 +64,6 @@ class _inventoryProductState extends State<inventoryProduct> {
         print("Error fetching data: $e");
       }
     }
-  }
-
-  void showToast(String message) {
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.TOP,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.red,
-      textColor: Colors.white,
-      fontSize: 16.0,
-    );
   }
 
   @override
@@ -193,7 +182,15 @@ class _inventoryProductState extends State<inventoryProduct> {
                           child: ElevatedButton(
                             onPressed: () {
                               if (product.text.isEmpty) {
-                                showToast("Please fill all fields.");
+                                AwesomeDialog(context: context,
+                                  width: screenWidth*0.3,
+                                  dialogType: DialogType.error,
+                                  animType: AnimType.topSlide,
+                                  showCloseIcon: true,
+                                  enableEnterKey: true,
+                                  title: 'Error',
+                                  desc: 'Please fill Product Name field',
+                                ).show();
                               } else {
                                 Navigator.push(
                                   context,

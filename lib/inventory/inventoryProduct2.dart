@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:eaziprep_app_desktop/inventory/inventoryProduct.dart';
 import 'package:image/image.dart' as img;
 import '../homescreen/homescreen.dart';
@@ -118,66 +119,7 @@ class _inventoryProduct2State extends State<inventoryProduct2> {
     return FirebaseAuth.instance.currentUser?.email ?? '';
   }
 
-  Future<void> _uploadImages() async {
-    if (_imageList.isEmpty) {
-      Fluttertoast.showToast(
-        msg: "Please add at least 1 picture",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.TOP,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-      return;
-    }
-    setState(() {
-      _loading = true;
-    });
-    int total = int.parse(totalproducts);
-    total = total +1;
-    totalproducts = total.toString();
-    List<String> imageUrls = [];
-    String email = await getUserEmail();
 
-    for (File imageFile in _imageList) {
-      Reference storageReference = FirebaseStorage.instance
-          .ref()
-          .child("images/${DateTime.now().millisecondsSinceEpoch}.jpg");
-      UploadTask uploadTask = storageReference.putFile(imageFile);
-
-      await uploadTask.whenComplete(() => print('Image uploaded'));
-
-      String downloadURL = await storageReference.getDownloadURL();
-      imageUrls.add(downloadURL);
-    }
-
-    // Save details to Firestore
-    await FirebaseFirestore.instance.collection('users').doc(email).collection(collection).doc(pname).set({
-      'pname': pname,
-      'variations': variations,
-      'stock': stock,
-      'imageUrls': imageUrls,
-    });
-
-    await FirebaseFirestore.instance.collection('users').doc(email).collection('allproducts').doc(pname).set({
-      'pname': pname,
-      'variations': variations,
-      'stock': stock,
-      'imageUrls': imageUrls,
-    });
-
-    await FirebaseFirestore.instance.collection('users').doc(email).update({
-      'Total Products': totalproducts,
-    });
-
-    setState(() {
-      _loading = false;
-    });
-
-    // Navigate to the next screen or perform any other action
-    Navigator.pushReplacementNamed(context, inventory.userinventory);
-  }
 
   @override
   void didChangeDependencies() {
@@ -199,6 +141,67 @@ class _inventoryProduct2State extends State<inventoryProduct2> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     Color customColor = HexColor("#fd7b2e");
+
+    Future<void> _uploadImages() async {
+      if (_imageList.isEmpty) {
+        AwesomeDialog(context: context,
+          width: screenWidth*0.3,
+          dialogType: DialogType.error,
+          animType: AnimType.topSlide,
+          showCloseIcon: true,
+          enableEnterKey: true,
+          title: 'Error',
+          desc: 'Please select at least 1 picture',
+        ).show();
+        return;
+      }
+      setState(() {
+        _loading = true;
+      });
+      int total = int.parse(totalproducts);
+      total = total +1;
+      totalproducts = total.toString();
+      List<String> imageUrls = [];
+      String email = await getUserEmail();
+
+      for (File imageFile in _imageList) {
+        Reference storageReference = FirebaseStorage.instance
+            .ref()
+            .child("images/${DateTime.now().millisecondsSinceEpoch}.jpg");
+        UploadTask uploadTask = storageReference.putFile(imageFile);
+
+        await uploadTask.whenComplete(() => print('Image uploaded'));
+
+        String downloadURL = await storageReference.getDownloadURL();
+        imageUrls.add(downloadURL);
+      }
+
+      // Save details to Firestore
+      await FirebaseFirestore.instance.collection('users').doc(email).collection(collection).doc(pname).set({
+        'pname': pname,
+        'variations': variations,
+        'stock': stock,
+        'imageUrls': imageUrls,
+      });
+
+      await FirebaseFirestore.instance.collection('users').doc(email).collection('allproducts').doc(pname).set({
+        'pname': pname,
+        'variations': variations,
+        'stock': stock,
+        'imageUrls': imageUrls,
+      });
+
+      await FirebaseFirestore.instance.collection('users').doc(email).update({
+        'Total Products': totalproducts,
+      });
+
+      setState(() {
+        _loading = false;
+      });
+
+      // Navigate to the next screen or perform any other action
+      Navigator.pushReplacementNamed(context, inventory.userinventory);
+    }
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,

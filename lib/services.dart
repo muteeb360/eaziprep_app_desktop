@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -38,7 +39,11 @@ class _servicesState extends State<services> {
       return true;
     },
     child: Scaffold(
-      body: Stack(
+      body: _loading
+          ? Center(
+        child: CircularProgressIndicator(),
+      )
+          : Stack(
         fit: StackFit.expand,
         children: [
           Container(
@@ -66,7 +71,7 @@ class _servicesState extends State<services> {
 
               Padding(
                 padding: EdgeInsets.only(top: screenWidth * 0.092, right: screenWidth * 0.3),
-                child: buildCard('FPM Services', screenWidth, 0),
+                child: buildCard('FBM Services', screenWidth, 0),
               ),
               Padding(
                 padding: EdgeInsets.only(top: screenWidth * 0.01, right: screenWidth * 0.3),
@@ -85,7 +90,15 @@ class _servicesState extends State<services> {
                     onPressed: () async {
                       // Check if at least one service is selected
                       if (!selectedCardIndices.contains(true)) {
-                        showToast("Please select at least one service.");
+                        AwesomeDialog(context: context,
+                        width: screenWidth*0.3,
+                        dialogType: DialogType.error,
+                        animType: AnimType.topSlide,
+                        showCloseIcon: true,
+                        enableEnterKey: true,
+                        title: 'Error',
+                        desc: 'Please select at least 1 service.',
+                      ).show();
                         return;
                       }
 
@@ -136,15 +149,6 @@ class _servicesState extends State<services> {
 
             ],
           ),
-          Visibility(
-            visible: _loading,
-            child: Container(
-              color: Colors.black.withOpacity(0.5), // Adjust opacity as needed
-              child: Center(
-                child: CircularProgressIndicator(valueColor: AlwaysStoppedAnimation<Color>(customColor),),
-              ),
-            ),
-          ),
         ],
 
       ),
@@ -152,17 +156,7 @@ class _servicesState extends State<services> {
     ),
     );
   }
-  void showToast(String message) {
-    Fluttertoast.showToast(
-      msg: message,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.TOP,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.red,
-      textColor: Colors.white,
-      fontSize: 16.0,
-    );
-  }
+
 
   Widget buildCard(String title,double screenWidth, int index) {
     Color customColor = HexColor("#fd7b2e");
@@ -239,12 +233,12 @@ class _servicesState extends State<services> {
       }
 
       for (int i = 0; i < selectedServices.length; i++) {
-        if(selectedServices[i]=='FPM Services'){
+        if(selectedServices[i]=='FBM Services'){
           fbm1 +=1;
           fbm = fbm1.toString();
           await FirebaseFirestore.instance.collection('users').doc('FBM Services').update({
             'clients': fbm,
-            'emails': userEmail
+            'emails': FieldValue.arrayUnion([userEmail]),
             // Add more fields as needed
           });
         }else if(selectedServices[i]=='FBA Services'){
@@ -252,7 +246,7 @@ class _servicesState extends State<services> {
           fba = fba1.toString();
           await FirebaseFirestore.instance.collection('users').doc('FBA Services').update({
             'clients': fba,
-            'emails': userEmail
+            'emails': FieldValue.arrayUnion([userEmail]),
             // Add more fields as needed
           });
         }else if(selectedServices[i]=='Etsy Fulfilment'){
@@ -260,7 +254,7 @@ class _servicesState extends State<services> {
           etsy = etsy1.toString();
           await FirebaseFirestore.instance.collection('users').doc('Etsy Fulfilment').update({
             'clients': etsy,
-            'emails': userEmail
+            'emails': FieldValue.arrayUnion([userEmail]),
             // Add more fields as needed
           });
         }else if(selectedServices[i]=='Ebay Fulfilment'){
@@ -268,7 +262,7 @@ class _servicesState extends State<services> {
           ebay = ebay1.toString();
           await FirebaseFirestore.instance.collection('users').doc('Ebay Fulfilment').update({
             'clients': ebay,
-            'emails': userEmail
+            'emails': FieldValue.arrayUnion([userEmail]),
             // Add more fields as needed
           });
         }else if(selectedServices[i]=='Tik Tok Fulfilment'){
@@ -276,7 +270,7 @@ class _servicesState extends State<services> {
           tiktok = tiktok1.toString();
           await FirebaseFirestore.instance.collection('users').doc('Tik Tok Fulfilment').update({
             'clients': tiktok,
-            'emails': userEmail
+            'emails': FieldValue.arrayUnion([userEmail]),
             // Add more fields as needed
           });
         }
