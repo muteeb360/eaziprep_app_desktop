@@ -53,6 +53,7 @@ dependencies:
   rive: ^0.11.4
   crypto: ^3.0.3
   flutter_masked_text2: ^0.9.1
+  barcode_widget: ^2.0.4
 
 dev_dependencies:
   flutter_test:
