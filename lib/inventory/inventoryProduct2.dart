@@ -6,7 +6,6 @@ import 'package:image/image.dart' as img;
 import '../homescreen/homescreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -109,7 +108,7 @@ class _inventoryProduct2State extends State<inventoryProduct2> {
     List<int> compressedBytes = img.encodeJpg(compressedImage);
 
     // Save the compressed image to a new file
-    File compressedFile = File(originalImage.path.replaceAll('.jpg', '_compressed.jpg'));
+    File compressedFile = File(originalImage.path.replaceAll('.jpg', '.jpg'));
     await compressedFile.writeAsBytes(compressedBytes);
 
     return compressedFile;

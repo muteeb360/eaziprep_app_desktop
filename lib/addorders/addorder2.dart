@@ -108,7 +108,7 @@ print('Stock : $stock');
     List<int> compressedBytes = img.encodeJpg(compressedImage);
 
     // Save the compressed image to a new file
-    File compressedFile = File(originalImage.path.replaceAll('.jpg', '_compressed.jpg'));
+    File compressedFile = File(originalImage.path.replaceAll('.jpg', '.jpg'));
     await compressedFile.writeAsBytes(compressedBytes);
 
     return compressedFile;

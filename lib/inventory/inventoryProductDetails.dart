@@ -1,8 +1,8 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:eaziprep_app_desktop/helpers/producttextfield.dart'; // Assuming this contains your custom TextField widget
 import 'package:eaziprep_app_desktop/auth/logIn.dart';
 import 'inventory.dart';
@@ -26,6 +26,7 @@ class _inventoryProductDetailsState extends State<inventoryProductDetails> {
   TextEditingController pnameController = TextEditingController();
   TextEditingController variationController = TextEditingController();
   TextEditingController stockController = TextEditingController();
+  List<dynamic> imageUrls = [];
   late String totalproducts='';
   @override
   void initState() {
@@ -71,6 +72,7 @@ class _inventoryProductDetailsState extends State<inventoryProductDetails> {
             pnameController.text = orderData['pname'] ?? '';
             variationController.text = orderData['variations'] ?? '';
             stockController.text = orderData['stock'] ?? '';
+            imageUrls = orderData['imageUrls']??'';
           });
         }
       }
@@ -113,12 +115,34 @@ class _inventoryProductDetailsState extends State<inventoryProductDetails> {
   }
 
   Future<void> deleteOrder() async {
+    print(imageUrls);
     try {
-
+      setState(() {
+        _loading = true;
+      });
       String userEmail = FirebaseAuth.instance.currentUser?.email ?? '';
       int total = int.parse(totalproducts);
       total = total -1;
       totalproducts = total.toString();
+      FirebaseStorage storage = FirebaseStorage.instance;
+      for (String downloadUrl in imageUrls) {
+        RegExp regex = RegExp(r'%2F(.*?)\?');
+        Match match = regex.firstMatch(downloadUrl) as Match;
+        String? result;
+        if (match != null && match.groupCount >= 1) {
+          result = match.group(1);
+          print(result); // Output: 1703971075194.jpg
+        } else {
+          print("No match found");
+        }
+        String fullPath = 'images/$result';
+
+        Reference storageRef = storage.ref().child(fullPath);
+
+        await storageRef.delete();
+
+        print('Image deleted successfully: $downloadUrl');
+      }
       // Get a reference to the document to be deleted
       DocumentReference productDocRef = FirebaseFirestore.instance
           .collection('users')
@@ -199,7 +223,10 @@ class _inventoryProductDetailsState extends State<inventoryProductDetails> {
             ),
           ],
         ),
-        body: SingleChildScrollView(
+        body: _loading
+            ? Center(
+          child: CircularProgressIndicator(),
+        ):SingleChildScrollView(
           child: Column(
             children: [
               Padding(
