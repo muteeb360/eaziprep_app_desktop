@@ -49,6 +49,26 @@ Future<List<String>> getVariations(String userEmail, String documentId, String f
   }
 }
 
+Future<String> getStock(String userEmail, String documentId, String fieldName, String collection) async {
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  DocumentReference specificDocument = firestore
+      .collection('users')
+      .doc(userEmail)
+      .collection(collection)
+      .doc(documentId);
+
+  try {
+    DocumentSnapshot documentSnapshot = await specificDocument.get();
+    Map<String, dynamic>? data = documentSnapshot.data() as Map<String, dynamic>?;
+    String stock= data?['stock']??'';
+    print('stock : $stock');
+    return stock;
+  } catch (e) {
+    print('Error fetching variations: $e');
+    return '';
+  }
+}
+
 Future<List<String>> fetchIdsArray() async {
   try {
     // Replace 'ordersids' with your actual collection name

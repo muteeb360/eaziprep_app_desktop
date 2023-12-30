@@ -35,6 +35,7 @@ class _addorderState extends State<addorder> {
   List<String> selectedServices = [];
   List<String> productNames=[];
   bool isLoading = false;
+  int stocks=0;
   @override
   void initState() {
     super.initState();
@@ -125,10 +126,11 @@ class _addorderState extends State<addorder> {
 
     if (fieldExists) {
       // Fetch variations and update the state
-      List<String> fetchedVariations =
-      await getVariations(userEmail, selectedproduct, 'variations',selectedservice);
+      List<String> fetchedVariations = await getVariations(userEmail, selectedproduct, 'variations',selectedservice);
+      String stock = await getStock(userEmail, selectedproduct, 'stock',selectedservice);
       setState(() {
         variations = fetchedVariations;
+        stocks = int.parse(stock);
       });
     }
   }
@@ -293,7 +295,18 @@ class _addorderState extends State<addorder> {
                                 btnOkOnPress: (){
                                   Navigator.pushReplacementNamed(context, addorder.add);
                                 }).show();
-                              } else {
+                              } else if(stocks==0){
+                                AwesomeDialog(context: context,
+                                    width: screenWidth*0.3,
+                                    dialogType: DialogType.error,
+                                    animType: AnimType.topSlide,
+                                    enableEnterKey: true,
+                                    title: 'Error',
+                                    desc: 'Product stock is 0',
+                                    btnOkOnPress: (){
+                                      Navigator.pushReplacementNamed(context, addorder.add);
+                                    }).show();
+                              }else {
                                 print('Selected service is $selectedservice');
                                 _showDialog(context,customer.text,selectedproduct,customeremail.text,address.text,selectedservice,post.text,phone.text,companyName);
                               }
