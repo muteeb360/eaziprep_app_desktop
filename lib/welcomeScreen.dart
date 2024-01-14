@@ -45,7 +45,7 @@ class _welcomescreenState extends State<welcomescreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Eazi Prep',
+              'LODGEX',
               style: GoogleFonts.getFont(
                 'Oswald',
                 textStyle: TextStyle(

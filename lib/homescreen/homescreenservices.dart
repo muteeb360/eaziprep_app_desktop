@@ -117,7 +117,6 @@ class _homescreenservicesState extends State<homescreenservices> {
 
             Column(
               children: [
-
                 Padding(
                   padding: EdgeInsets.only(top: screenWidth * 0.092, right: screenWidth * 0.3),
                   child: buildCard('FBM Services', screenWidth, 0),
@@ -206,8 +205,7 @@ class _homescreenservicesState extends State<homescreenservices> {
 
   Widget buildCard(String title,double screenWidth, int index) {
     Color customColor = HexColor("#fd7b2e");
-    return Expanded(
-      child: GestureDetector(
+    return GestureDetector(
         onTap: () {
           setState(() {
             selectedCardIndices[index] = !selectedCardIndices[index];
@@ -216,7 +214,6 @@ class _homescreenservicesState extends State<homescreenservices> {
         child: SizedBox(
           height: screenWidth*0.13,
           width: screenWidth*0.13,
-
           child: Card(
             color: selectedCardIndices[index] ? customColor : Colors.white70,
             child: Center(
@@ -237,8 +234,7 @@ class _homescreenservicesState extends State<homescreenservices> {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 
 

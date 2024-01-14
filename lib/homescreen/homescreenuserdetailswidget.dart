@@ -23,9 +23,6 @@ class _homescreenuserdetailswidgetState extends State<homescreenuserdetailswidge
   }
 
   Future<void> initializeData() async {
-    setState(() {
-      isLoading = true;
-    });
     // Use FirebaseAuth to get the current user's email
     userEmail = FirebaseAuth.instance.currentUser?.email;
 
@@ -36,9 +33,6 @@ class _homescreenuserdetailswidgetState extends State<homescreenuserdetailswidge
     if (mounted) {
       setState(() {});
     }
-    setState(() {
-      isLoading = false;
-    });
   }
 
   @override
@@ -46,11 +40,7 @@ class _homescreenuserdetailswidgetState extends State<homescreenuserdetailswidge
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     Color customColor = HexColor("#fd7b2e");
-    return isLoading
-        ? Center(
-      child: CircularProgressIndicator(),
-    )
-        : Padding(
+    return Padding(
       padding: EdgeInsets.only(top: screenHeight*0.03,left: screenWidth * 0.1,),
       child: Container(
         width: screenWidth*0.49,

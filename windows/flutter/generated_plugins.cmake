@@ -9,7 +9,6 @@ list(APPEND FLUTTER_PLUGIN_LIST
   firebase_core
   firebase_storage
   rive_common
-  win_toast
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

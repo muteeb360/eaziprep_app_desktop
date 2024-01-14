@@ -18,6 +18,7 @@ Future<Map<String, dynamic>> getUserData(String email) async {
       // Convert the services to a list of strings
       List<String> serviceList =
       services.map((dynamic service) => service.toString()).toList();
+      print(name+phone+imageUrl);
 
       return {
         'name': name,

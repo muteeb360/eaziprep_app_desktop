@@ -79,8 +79,8 @@ class _homescreenState extends State<homescreen> {
               ),
             ),
           ),
-          homescreenuserdetailswidget(),
           homescreenInventoryWidget(),
+          homescreenuserdetailswidget(),
           Padding(
             padding: EdgeInsets.only(
                 top: screenWidth * 0.15,

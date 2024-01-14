@@ -70,7 +70,7 @@ class _homescreenInventoryWidgetState extends State<homescreenInventoryWidget> {
       ),
       child: Container(
         width: screenWidth * 0.3,
-        height: screenHeight * 0.23,
+        height: screenHeight*0.23,
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(
             Radius.circular(20.0), // Adjust the radius as needed
@@ -78,79 +78,75 @@ class _homescreenInventoryWidgetState extends State<homescreenInventoryWidget> {
           color: Colors.white70,
         ),
         child: Card(
-          color: customColor,
-          child: Container(
-            width: screenWidth * 0.18,
-            child: Column(
-              children: [
-                Center(
-                  child: Container(
-                    child:
-                    Text('Inventory',style: GoogleFonts.getFont(
-                      'Outfit',
-                      textStyle: TextStyle(
-                        fontSize: screenWidth * 0.02,
-                        color: Colors.white,
-                      ),
-                    ),),
+            color: customColor,
+            child: Container(
+              width: screenWidth * 0.18,
+              child: Column(
+                children: [
+                  Center(
+                    child: Container(
+                      child:
+                      Text('Inventory',style: GoogleFonts.getFont(
+                        'Outfit',
+                        textStyle: TextStyle(
+                          fontSize: screenWidth * 0.02,
+                          color: Colors.white,
+                        ),
+                      ),),
+                    ),
                   ),
-                ),
-                Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(top: screenWidth*0.01,left: screenWidth*0.01),
-                      child: Expanded(
-                        child: Text(
-                          'Total Products: $totalproducts',
-                          style: GoogleFonts.getFont(
-                            'Outfit',
-                            textStyle: TextStyle(
-                              fontSize: screenWidth * 0.015,
-                              color: Colors.white,
-                            ),
-                          ),
-                          softWrap: false,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: screenWidth*0.01),
-                      child: Expanded(
-                        child: MouseRegion(
-                          cursor: SystemMouseCursors.click,
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.pushReplacementNamed(context, inventory.userinventory);
-                            },
-                            child: Text(
-                              'update inventory',
-                              style: GoogleFonts.getFont(
-                                'Outfit',
-                                textStyle: TextStyle(
-                                  fontSize: screenWidth * 0.015,
-                                  color: Colors.yellow,
-                                ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: screenWidth*0.01,left: screenWidth*0.01),
+                          child: Text(
+                            'Total Products: $totalproducts',
+                            style: GoogleFonts.getFont(
+                              'Outfit',
+                              textStyle: TextStyle(
+                                fontSize: screenWidth * 0.015,
+                                color: Colors.white,
                               ),
-                              softWrap: false,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
                             ),
+                            softWrap: false,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(left: screenWidth*0.01),
+                          child: MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.pushReplacementNamed(context, inventory.userinventory);
+                              },
+                              child: Text(
+                                'update inventory',
+                                style: GoogleFonts.getFont(
+                                  'Outfit',
+                                  textStyle: TextStyle(
+                                    fontSize: screenWidth * 0.015,
+                                    color: Colors.yellow,
+                                  ),
+                                ),
+                                softWrap: false,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
       ),
     );
   }

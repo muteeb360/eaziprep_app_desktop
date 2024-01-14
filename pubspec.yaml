@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 2.0.0+1
 
 environment:
   sdk: '>=3.2.0 <4.0.0'
@@ -45,8 +45,6 @@ dependencies:
   cloud_firestore: ^4.13.2
   firebase_storage: ^11.5.6
   google_fonts: ^4.0.3
-  win_toast: ^0.3.0
-  msix: ^3.16.7
   awesome_dialog: ^3.1.0
   crypto: ^3.0.3
   flutter_masked_text2: ^0.9.1
@@ -65,6 +63,21 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  msix: ^3.16.7
+
+msix_config:
+  display_name: LODGEX
+  publisher_display_name: Coders Bay
+  publisher: CN=FE4A5193-C895-4F96-96F5-484A3DFCFE04
+  identity_name: 41052CodersBay.Lodgex
+  capabilities: "internetClient"
+  logo_path: D:\APPS\eaziprep_app_desktop\assets\logo1.png
+  version: 2.0.1.0
+  archs:
+    - x64
+    - x86
+    - arm
+
 
 flutter_icons:
   android: true
@@ -121,3 +134,4 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+

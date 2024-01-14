@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:eaziprep_app_desktop/addorders/addorder.dart';
 import 'package:eaziprep_app_desktop/auth/logIn.dart';
 import 'package:eaziprep_app_desktop/helpers/test.dart';
+import 'package:eaziprep_app_desktop/homescreen/homescreenservices.dart';
 import 'package:eaziprep_app_desktop/inventory/inventory.dart';
 import 'package:eaziprep_app_desktop/inventory/inventoryProduct.dart';
 
@@ -36,7 +37,8 @@ class _splashScreenState extends State<splashScreen> {
 
       if (_isLoggedIn) {
         // User is logged in, navigate to the home screen
-        Navigator.pushReplacementNamed(context, addorder.add);
+         Navigator.pushReplacementNamed(context, addorder.add);
+        //Navigator.pushReplacementNamed(context, homescreen.home);
       }else {
         Navigator.pushReplacementNamed(context,welcomescreen.welcome);
         print('user is not logged in');

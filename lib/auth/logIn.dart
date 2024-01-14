@@ -86,6 +86,9 @@ class _loginState extends State<login> {
           title: 'Error',
           desc: 'Error Loggin In. Cause : $e',
         ).show();
+        setState(() {
+          _loading = false;
+        });
       }
     }
     return WillPopScope(
